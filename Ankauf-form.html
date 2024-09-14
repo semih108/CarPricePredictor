@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <button id="predict-price">predict price</button>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const markeElement = document.querySelector(
@@ -584,57 +583,8 @@
       kilometerTypeElement.addEventListener("input", handleKilometerTypeChange);
       telephoneTypeElement.addEventListener("input", handleUserInformation1TypeChange);
       emailTypeElement.addEventListener("input", handleUserInformation1TypeChange);
-
-      //predict api-call
-
-      const predictButton = document.getElementById("predict-price");
-
-      predictButton.addEventListener('click', function () {
-        // Capture form data
-        const make = markeElement.value;
-        const model = modelElement.value;
-        const mileage = kilometerTypeElement.value;
-        const transmission = gearTypeElement.value;
-        const fuel = fuelElement.value;
-        const power_ps = powerTypeElement.value.split(' ')[1]; // Extract PS from string
-        const car_age = new Date().getFullYear() - yearElement.value; // Calculate car age from year
-        const subtype = modelDetailElement.value;
-
-        // Prepare data payload
-        const requestData = {
-          make: make,
-          model_name: model,
-          mileage: parseInt(mileage),
-          transmission: transmission,
-          fuel: fuel,
-          power_ps: parseInt(power_ps),
-          car_age: parseInt(car_age),
-          subtype: subtype,
-        };
-
-        // Send POST request to the prediction API
-        fetch('https://car-price-predictor-755690643224.europe-west3.run.app/predict', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestData),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.predicted_price) {
-              alert(`The predicted price of the car is: € ${data.predicted_price}`);
-            } else {
-              alert(`Error: ${data.error}`);
-            }
-          })
-          .catch((error) => {
-            console.error('Error during API call:', error);
-          });
-      });
     });
-    
   </script>
 </body>
-    
+
 </html>
