@@ -1,590 +1,662 @@
 <html>
 
 <head>
-  <style>
-    .elementor-select-wrapper .select-caret-down-wrapper {
-      display: none;
-    }
-  </style>
+    <style>
+        .elementor-select-wrapper .select-caret-down-wrapper {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const markeElement = document.querySelector(
-        'select[name="form_fields[marke]"]'
-      );
-      const modelElement = document.querySelector(
-        'select[name="form_fields[model]"]'
-      );
-      const modelDetailElement = document.querySelector(
-        'select[name="form_fields[model_detail]"]'
-      );
-      const yearElement = document.querySelector(
-        'select[name="form_fields[built_year]"]'
-      );
-      const bodyElement = document.querySelector(
-        'select[name="form_fields[body_type]"]'
-      );
-      const fuelElement = document.querySelector(
-        'select[name="form_fields[fuel_type]"]'
-      );
-      const gearTypeElement = document.querySelector(
-        'select[name="form_fields[gear_type]"]'
-      );
-      const powerTypeElement = document.querySelector(
-        'select[name="form_fields[power_type]"]'
-      );
-      const kilometerTypeElement = document.querySelector(
-        'input[name="form_fields[kilometer]"]'
-      );
-      const firstNameTypeElement = document.querySelector(
-        'input[name="form_fields[first_name]"]'
-      );
-      const lastNameTypeElement = document.querySelector(
-        'input[name="form_fields[last_name]"]'
-      );
-      const emailTypeElement = document.querySelector(
-        'input[name="form_fields[email]"]'
-      );
-      const telephoneTypeElement = document.querySelector(
-        'input[name="form_fields[telephone]"]'
-      );
-      const begutachtungTypeElement = document.querySelector(
-        'select[name="form_fields[begutachtung]"]'
-      );
-      const finTypeElement = document.querySelector(
-        'input[name="form_fields[fin]"]'
-      );
-      const kontaktTypeElement = document.querySelector(
-        'select[name="form_fields[kontakt]"]'
-      );
-      const messageTypeElement = document.querySelector(
-        'textarea[name="form_fields[message]"]'
-      );
-      const uploadFileElements = document.querySelectorAll(
-        ".elementor-field-type-upload"
-      );
-      const wishDate = document.querySelector(
-        'input[name="form_fields[wishDate]"]'
-      );
-      const wishTime = document.querySelector(
-        'select[name="form_fields[wishTime]"]'
-      );
-      const wishDateLabel = document.querySelector(
-        'select[id="wishTimeLabel"]'
-      );      
-      
-      
-
-      const submitButton = document.querySelector("button.elementor-button");
-      submitButton.style.display = "none";
-      let url = "https://www.ta-autoshop.at/api.php";
-      let makeId;
-
-      function hideSelector(selector) {
-        if (selector) {
-          selector.style.display = "none";
-          selector.innerHTML = "";
-          const label = document.querySelector(
-            `label[for="${selector.id}"]`
-          );
-          if (label) {
-            label.style.display = "none";
-          }
-        }
-      }
-
-      function initializeSelectors() {
-        const selectors = [
-          modelElement,
-          modelDetailElement,
-          yearElement,
-          bodyElement,
-          fuelElement,
-          gearTypeElement,
-          powerTypeElement,
-        ];
-
-        selectors.forEach((selector) => {
-          hideSelector(selector);
-        });
-      }
-      initializeSelectors();
-
-      function hideElementUserData(element) {
-        element.style.display = "none";
-        const label = document.querySelector(`label[for="${element.id}"]`);
-        if (label) {
-          label.style.display = "none";
-        }
-      }
-
-      hideElementUserData(kilometerTypeElement);
-      hideElementUserData(firstNameTypeElement);
-      hideElementUserData(lastNameTypeElement);
-      hideElementUserData(emailTypeElement);
-      hideElementUserData(telephoneTypeElement);
-      hideElementUserData(begutachtungTypeElement);
-      hideElementUserData(finTypeElement);
-      hideElementUserData(kontaktTypeElement);
-      hideElementUserData(messageTypeElement);
-      hideElementUserData(wishDate);
-      hideElementUserData(wishTime);
-      hideElementUserData(wishTimeLabel);
-      
-      //hide FileUpload
-      uploadFileElements.forEach(function (element) {
-        element.style.display = "none";
-      });
-
-      function displayElement(element) {
-        const label = document.querySelector(`label[for="${element.id}"]`);
-        if (label) {
-          label.style.display = "block";
-        }
-
-        element.style.display = "block";
-        element.innerHTML = "<option>Loading...</option>";
-      }
-
-      function addDefaultOption(selectElement) {
-        const defaultOption = document.createElement("option");
-        defaultOption.textContent = "-- auswählen --";
-        defaultOption.selected = true;
-        defaultOption.disabled = true;
-        selectElement.appendChild(defaultOption);
-      }
-
-      function selectOnlyOption(selectElement) {
-        if (selectElement.options.length === 2) {
-          selectElement.selectedIndex = 1; // Select the only available option
-          // Manually trigger change event
-          selectElement.dispatchEvent(new Event("change"));
-        }
-      }
-
-      function showLoadingMessage(selector) {
-        selector.innerHTML = "<option>Loading...</option>";
-      }
-
-      function resetFieldsForMake() {
-        const fieldsToReset = [
-          modelElement, modelDetailElement, yearElement, bodyElement,
-          fuelElement, gearTypeElement, powerTypeElement,
-          kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForModel() {
-        const fieldsToReset = [
-          modelDetailElement, yearElement, bodyElement,
-          fuelElement, gearTypeElement, powerTypeElement,
-          kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForModelDetail() {
-        const fieldsToReset = [
-          yearElement, bodyElement,
-          fuelElement, gearTypeElement, powerTypeElement,
-          kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForBuiltYear() {
-        const fieldsToReset = [
-          bodyElement,fuelElement, gearTypeElement, powerTypeElement,
-          kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForBodyType() {
-        const fieldsToReset = [
-          fuelElement, gearTypeElement, powerTypeElement,
-          kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForFuelType() {
-        const fieldsToReset = [
-          gearTypeElement, powerTypeElement,kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-      function resetFieldsForGearType() {
-        const fieldsToReset = [
-          powerTypeElement,kilometerTypeElement
-        ];
-        fieldsToReset.forEach((field) => {hideSelector(field);})
-      }
-
-      // make
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const popularMakes = ["Audi", "BMW", "Mercedes-Benz", "Volkswagen"];
-          popularMakes.forEach((makeName) => {
-            const make = data.find((item) => item.name === makeName);
-            if (make) {
-              const option = document.createElement("option");
-              option.setAttribute("data-make-id", make.id);
-              option.value = make.name;
-              option.textContent = makeName;
-              markeElement.appendChild(option);
-            }
-          });
-          // Append the rest of the options
-          data.forEach(function (make) {
-            // Check if the make name is not in the popular list before appending
-            if (!popularMakes.includes(make.name)) {
-              const option = document.createElement("option");
-              option.value = make.name;
-              option.setAttribute("data-make-id", make.id);
-              option.textContent = make.name;
-              markeElement.appendChild(option);
-            }
-          });
-        })
-        .catch((error) => {
-          console.log("Error fetching data:", error);
-        });
-
-      // model
-      function handleMarkeChange() {
-        resetFieldsForMake();
-        if (markeElement.value !== "") {
-          displayElement(modelElement);
-          showLoadingMessage(modelDetailElement);
-          makeId =
-            markeElement.options[markeElement.selectedIndex].getAttribute(
-              "data-make-id"
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const markeElement = document.querySelector(
+                'select[name="form_fields[marke]"]'
             );
-          const url = "https://www.ta-autoshop.at/api.php?make_id=" + makeId;
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              modelElement.innerHTML = "";
-              addDefaultOption(modelElement);
-              data.forEach(function (model) {
-                const option = document.createElement("option");
-                option.value = model.name;
-                option.textContent = model.name;
-                option.dataset.modelName = model.name;
-                modelElement.appendChild(option);
-              });
-              selectOnlyOption(modelElement);
-            })
-            .catch((error) => {
-              console.log("Error fetching data:", error);
-            });
-        }
-      }
+            const modelElement = document.querySelector(
+                'select[name="form_fields[model]"]'
+            );
+            const modelDetailElement = document.querySelector(
+                'select[name="form_fields[model_detail]"]'
+            );
+            const yearElement = document.querySelector(
+                'select[name="form_fields[built_year]"]'
+            );
+            const bodyElement = document.querySelector(
+                'select[name="form_fields[body_type]"]'
+            );
+            const fuelElement = document.querySelector(
+                'select[name="form_fields[fuel_type]"]'
+            );
+            const gearTypeElement = document.querySelector(
+                'select[name="form_fields[gear_type]"]'
+            );
+            const powerTypeElement = document.querySelector(
+                'select[name="form_fields[power_type]"]'
+            );
+            const kilometerTypeElement = document.querySelector(
+                'input[name="form_fields[kilometer]"]'
+            );
+            const firstNameTypeElement = document.querySelector(
+                'input[name="form_fields[first_name]"]'
+            );
+            const lastNameTypeElement = document.querySelector(
+                'input[name="form_fields[last_name]"]'
+            );
+            const emailTypeElement = document.querySelector(
+                'input[name="form_fields[email]"]'
+            );
+            const telephoneTypeElement = document.querySelector(
+                'input[name="form_fields[telephone]"]'
+            );
+            const begutachtungTypeElement = document.querySelector(
+                'select[name="form_fields[begutachtung]"]'
+            );
+            const finTypeElement = document.querySelector(
+                'input[name="form_fields[fin]"]'
+            );
+            const kontaktTypeElement = document.querySelector(
+                'select[name="form_fields[kontakt]"]'
+            );
+            const messageTypeElement = document.querySelector(
+                'textarea[name="form_fields[message]"]'
+            );
+            const uploadFileElements = document.querySelectorAll(
+                ".elementor-field-type-upload"
+            );
+            const wishDate = document.querySelector(
+                'input[name="form_fields[wishDate]"]'
+            );
+            const wishTime = document.querySelector(
+                'select[name="form_fields[wishTime]"]'
+            );
+            const wishDateLabel = document.querySelector(
+                'select[id="wishTimeLabel"]'
+            );
+            const submitButton = document.querySelector("button.elementor-button");
+            submitButton.style.display = "none";
+            let url = "https://www.ta-autoshop.at/api.php";
+            let makeId;
 
-      // model-detail
-      function handleModelChange() {
-        resetFieldsForModel();
-        if (markeElement.value !== "") {
-          displayElement(modelDetailElement);
-          showLoadingMessage(modelDetailElement);
-          const modelName =
-            modelElement.options[modelElement.selectedIndex].dataset
-              .modelName;
-          url =
-            "https://www.ta-autoshop.at/api.php?make_id=" +
-            makeId +
-            "&model_name=%27" +
-            modelName +
-            "%27";
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              modelDetailElement.innerHTML = "";
-              addDefaultOption(modelDetailElement);
-              const parsedData = JSON.parse(data.details);
-              const subTypeSet = new Set();
-              parsedData.forEach((car) => {
-                subTypeSet.add(car.subType);
-              });
-              subTypeSet.forEach((subType) => {
-                const option = document.createElement("option");
-                option.textContent = subType;
-                modelDetailElement.appendChild(option);
-              });
-              selectOnlyOption(modelDetailElement);
-            });
-        }
-      }
-
-      // year
-      function handleModelDetailChange() {
-        resetFieldsForModelDetail();
-        if (modelDetailElement.value !== "") {
-          displayElement(yearElement);
-          showLoadingMessage(yearElement);
-          const selectedModelDetail = modelDetailElement.value;
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              yearElement.innerHTML = "";
-              addDefaultOption(yearElement);
-              if (
-                typeof data === "object" &&
-                data !== null &&
-                data.hasOwnProperty("details")
-              ) {
-                const detailsArray = JSON.parse(data.details);
-                const yearsSet = new Set();
-                if (Array.isArray(detailsArray)) {
-                  detailsArray.forEach((car) => {
-                    if (
-                      car.subType === selectedModelDetail &&
-                      !yearsSet.has(car.year)
-                    ) {
-                      const option = document.createElement("option");
-                      option.value = car.year;
-                      option.textContent = car.year;
-                      yearElement.appendChild(option);
-                      yearsSet.add(car.year);
+            function hideSelector(selector) {
+                if (selector) {
+                    selector.style.display = "none";
+                    selector.innerHTML = "";
+                    const label = document.querySelector(
+                        `label[for="${selector.id}"]`
+                    );
+                    if (label) {
+                        label.style.display = "none";
                     }
-                  });
                 }
-              }
-              selectOnlyOption(yearElement);
-            });
-        }
-      }
+            }
 
-      // Body Type
-      function handleyearChange() {
-        resetFieldsForBuiltYear();
-        if (yearElement.value !== "") {
-          displayElement(bodyElement);
-          showLoadingMessage(bodyElement);
-          const selectedModelDetail = modelDetailElement.value;
-          const selectedyear = yearElement.value;
+            function initializeSelectors() {
+                const selectors = [
+                    modelElement,
+                    modelDetailElement,
+                    yearElement,
+                    bodyElement,
+                    fuelElement,
+                    gearTypeElement,
+                    powerTypeElement,
+                ];
 
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              bodyElement.innerHTML = "";
-              addDefaultOption(bodyElement);
-              if (
-                typeof data === "object" &&
-                data !== null &&
-                data.hasOwnProperty("details")
-              ) {
-                const detailsArray = JSON.parse(data.details);
-                const bodysSet = new Set();
+                selectors.forEach((selector) => {
+                    hideSelector(selector);
+                });
+            }
+            initializeSelectors();
 
-                if (Array.isArray(detailsArray)) {
-                  detailsArray.forEach((car) => {
-                    if (
-                      car.subType === selectedModelDetail &&
-                      car.year === selectedyear &&
-                      !bodysSet.has(car.body.name)
-                    ) {
-                      let bodyName = car.body.name;
-                      bodysSet.add(bodyName);
-                      const option = document.createElement("option");
-                      option.value = bodyName;
-                      if (bodyName === "Coupu00e9") {
-                        bodyName = "Coupe";
-                      }
-                      if (bodyName === "Coupu00e9 / Cabrio") {
-                        bodyName = "Coupe/Cabrio";
-                      }
-                      option.textContent = bodyName;
-                      bodyElement.appendChild(option);
-                    }
-                  });
+            function hideElementUserData(element) {
+                element.style.display = "none";
+                const label = document.querySelector(`label[for="${element.id}"]`);
+                if (label) {
+                    label.style.display = "none";
                 }
-              }
-              selectOnlyOption(bodyElement);
+            }
+
+            hideElementUserData(kilometerTypeElement);
+            hideElementUserData(firstNameTypeElement);
+            hideElementUserData(lastNameTypeElement);
+            hideElementUserData(emailTypeElement);
+            hideElementUserData(telephoneTypeElement);
+            hideElementUserData(begutachtungTypeElement);
+            hideElementUserData(finTypeElement);
+            hideElementUserData(kontaktTypeElement);
+            hideElementUserData(messageTypeElement);
+            hideElementUserData(wishDate);
+            hideElementUserData(wishTime);
+            hideElementUserData(wishTimeLabel);
+
+            //hide FileUpload
+            uploadFileElements.forEach(function (element) {
+                element.style.display = "none";
             });
-        }
-      }
 
-      // fuel-type
-      function handlebodyChange() {
-        resetFieldsForBodyType();
-        if (bodyElement.value !== "") {
-          displayElement(fuelElement);
-          showLoadingMessage(fuelElement);
-          const selectedModelDetail = modelDetailElement.value;
-          const selectedyear = yearElement.value;
-          const selectedbody = bodyElement.value;
-
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              fuelElement.innerHTML = "";
-              addDefaultOption(fuelElement);
-              if (
-                typeof data === "object" &&
-                data !== null &&
-                data.hasOwnProperty("details")
-              ) {
-                const detailsArray = JSON.parse(data.details);
-                const fuelsSet = new Set();
-                if (Array.isArray(detailsArray)) {
-                  detailsArray.forEach((car) => {
-                    if (
-                      car.subType === selectedModelDetail &&
-                      car.year === selectedyear &&
-                      car.body.name === selectedbody &&
-                      !fuelsSet.has(car.fuel.name)
-                    ) {
-                      const option = document.createElement("option");
-                      option.value = car.fuel.name;
-                      option.textContent = car.fuel.name;
-                      fuelElement.appendChild(option);
-                      fuelsSet.add(car.fuel.name);
-                    }
-                  });
+            function displayElement(element) {
+                const label = document.querySelector(`label[for="${element.id}"]`);
+                if (label) {
+                    label.style.display = "block";
                 }
-              }
-              selectOnlyOption(fuelElement);
-            });
-        }
-      }
 
-      // gear-type
-      function handlefuelChange() {
-        resetFieldsForFuelType();
-        if (fuelElement.value !== "") {
-          displayElement(gearTypeElement);
-          showLoadingMessage(gearTypeElement);
-          const selectedModelDetail = modelDetailElement.value;
-          const selectedyear = yearElement.value;
-          const selectedbody = bodyElement.value;
-          const selectedfuel = fuelElement.value;
+                element.style.display = "block";
+                element.innerHTML = "<option>Loading...</option>";
+            }
 
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              gearTypeElement.innerHTML = "";
-              addDefaultOption(gearTypeElement);
-              const parsedData = JSON.parse(data.details);
-              const gearSet = new Set();
-              parsedData.forEach((car) => {
-                if (
-                  car.subType === selectedModelDetail &&
-                  car.year === selectedyear &&
-                  car.body.name === selectedbody &&
-                  car.fuel.name === selectedfuel
-                ) {
-                  car.gear.forEach((gear) => {
-                    const gearTypeName = gear.name;
-                    gearSet.add(gearTypeName);
-                  });
+            function addDefaultOption(selectElement) {
+                const defaultOption = document.createElement("option");
+                defaultOption.textContent = "-- auswählen --";
+                defaultOption.selected = true;
+                defaultOption.disabled = true;
+                selectElement.appendChild(defaultOption);
+            }
+
+            function selectOnlyOption(selectElement) {
+                if (selectElement.options.length === 2) {
+                    selectElement.selectedIndex = 1; // Select the only available option
+                    // Manually trigger change event
+                    selectElement.dispatchEvent(new Event("change"));
                 }
-              });
-              gearSet.forEach((gearType) => {
-                const option = document.createElement("option");
-                option.textContent = gearType;
-                gearTypeElement.appendChild(option);
-              });
-              selectOnlyOption(gearTypeElement);
-            });
-        }
-      }
+            }
 
-      // power-type (kw/ps)
-      function handleGearlTypeChange() {
-        resetFieldsForGearType();
-        if (gearTypeElement.value !== "") {
-          displayElement(powerTypeElement);
-          showLoadingMessage(powerTypeElement);
-          fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-              powerTypeElement.innerHTML = "";
-              addDefaultOption(powerTypeElement);
-              const selectedModelDetail = modelDetailElement.value;
-              const selectedyear = yearElement.value;
-              const selectedbody = bodyElement.value;
-              const selectedfuel = fuelElement.value;
-              const selectedGearType = gearTypeElement.value;
-              const parsedData = JSON.parse(data.details);
-              const powerTypeSet = new Set(); // Create a set to store unique power type values
+            function showLoadingMessage(selector) {
+                selector.innerHTML = "<option>Loading...</option>";
+            }
 
-              parsedData.forEach((car) => {
-                if (
-                  car.subType === selectedModelDetail &&
-                  car.year === selectedyear &&
-                  car.body.name === selectedbody &&
-                  car.fuel.name === selectedfuel &&
-                  car.gear.some((gear) => gear.name === selectedGearType)
-                ) {
-                  const powerType =
-                    (car.power ? car.power + " kW / " : "") +
-                    (car.ps ? car.ps + " PS" : "");
-                  powerTypeSet.add(powerType.trim().slice(0, -5)); // Remove the last character
+            function resetFieldsForMake() {
+                const fieldsToReset = [
+                    modelElement, modelDetailElement, yearElement, bodyElement,
+                    fuelElement, gearTypeElement, powerTypeElement,
+                    kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForModel() {
+                const fieldsToReset = [
+                    modelDetailElement, yearElement, bodyElement,
+                    fuelElement, gearTypeElement, powerTypeElement,
+                    kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForModelDetail() {
+                const fieldsToReset = [
+                    yearElement, bodyElement,
+                    fuelElement, gearTypeElement, powerTypeElement,
+                    kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForBuiltYear() {
+                const fieldsToReset = [
+                    bodyElement, fuelElement, gearTypeElement, powerTypeElement,
+                    kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForBodyType() {
+                const fieldsToReset = [
+                    fuelElement, gearTypeElement, powerTypeElement,
+                    kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForFuelType() {
+                const fieldsToReset = [
+                    gearTypeElement, powerTypeElement, kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+            function resetFieldsForGearType() {
+                const fieldsToReset = [
+                    powerTypeElement, kilometerTypeElement
+                ];
+                fieldsToReset.forEach((field) => { hideSelector(field); })
+            }
+
+            // make
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    const popularMakes = ["Audi", "BMW", "Mercedes-Benz", "Volkswagen"];
+                    popularMakes.forEach((makeName) => {
+                        const make = data.find((item) => item.name === makeName);
+                        if (make) {
+                            const option = document.createElement("option");
+                            option.setAttribute("data-make-id", make.id);
+                            option.value = make.name;
+                            option.textContent = makeName;
+                            markeElement.appendChild(option);
+                        }
+                    });
+                    // Append the rest of the options
+                    data.forEach(function (make) {
+                        // Check if the make name is not in the popular list before appending
+                        if (!popularMakes.includes(make.name)) {
+                            const option = document.createElement("option");
+                            option.value = make.name;
+                            option.setAttribute("data-make-id", make.id);
+                            option.textContent = make.name;
+                            markeElement.appendChild(option);
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.log("Error fetching data:", error);
+                });
+
+            // model
+            function handleMarkeChange() {
+                resetFieldsForMake();
+                if (markeElement.value !== "") {
+                    displayElement(modelElement);
+                    showLoadingMessage(modelDetailElement);
+                    makeId =
+                        markeElement.options[markeElement.selectedIndex].getAttribute(
+                            "data-make-id"
+                        );
+                    const url = "https://www.ta-autoshop.at/api.php?make_id=" + makeId;
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            modelElement.innerHTML = "";
+                            addDefaultOption(modelElement);
+                            data.forEach(function (model) {
+                                const option = document.createElement("option");
+                                option.value = model.name;
+                                option.textContent = model.name;
+                                option.dataset.modelName = model.name;
+                                modelElement.appendChild(option);
+                            });
+                            selectOnlyOption(modelElement);
+                        })
+                        .catch((error) => {
+                            console.log("Error fetching data:", error);
+                        });
                 }
-              });
-              powerTypeSet.forEach((powerType) => {
-                const option = document.createElement("option");
-                option.textContent = powerType;
-                powerTypeElement.appendChild(option);
-              });
-              selectOnlyOption(powerTypeElement);
+            }
+
+            // model-detail
+            function handleModelChange() {
+                resetFieldsForModel();
+                if (markeElement.value !== "") {
+                    displayElement(modelDetailElement);
+                    showLoadingMessage(modelDetailElement);
+                    const modelName =
+                        modelElement.options[modelElement.selectedIndex].dataset
+                            .modelName;
+                    url =
+                        "https://www.ta-autoshop.at/api.php?make_id=" +
+                        makeId +
+                        "&model_name=%27" +
+                        modelName +
+                        "%27";
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            modelDetailElement.innerHTML = "";
+                            addDefaultOption(modelDetailElement);
+                            const parsedData = JSON.parse(data.details);
+                            const subTypeSet = new Set();
+                            parsedData.forEach((car) => {
+                                subTypeSet.add(car.subType);
+                            });
+                            subTypeSet.forEach((subType) => {
+                                const option = document.createElement("option");
+                                option.textContent = subType;
+                                modelDetailElement.appendChild(option);
+                            });
+                            selectOnlyOption(modelDetailElement);
+                        });
+                }
+            }
+
+            // year
+            function handleModelDetailChange() {
+                resetFieldsForModelDetail();
+                if (modelDetailElement.value !== "") {
+                    displayElement(yearElement);
+                    showLoadingMessage(yearElement);
+                    const selectedModelDetail = modelDetailElement.value;
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            yearElement.innerHTML = "";
+                            addDefaultOption(yearElement);
+                            if (
+                                typeof data === "object" &&
+                                data !== null &&
+                                data.hasOwnProperty("details")
+                            ) {
+                                const detailsArray = JSON.parse(data.details);
+                                const yearsSet = new Set();
+                                if (Array.isArray(detailsArray)) {
+                                    detailsArray.forEach((car) => {
+                                        if (
+                                            car.subType === selectedModelDetail &&
+                                            !yearsSet.has(car.year)
+                                        ) {
+                                            const option = document.createElement("option");
+                                            option.value = car.year;
+                                            option.textContent = car.year;
+                                            yearElement.appendChild(option);
+                                            yearsSet.add(car.year);
+                                        }
+                                    });
+                                }
+                            }
+                            selectOnlyOption(yearElement);
+                        });
+                }
+            }
+
+            // Body Type
+            function handleyearChange() {
+                resetFieldsForBuiltYear();
+                if (yearElement.value !== "") {
+                    displayElement(bodyElement);
+                    showLoadingMessage(bodyElement);
+                    const selectedModelDetail = modelDetailElement.value;
+                    const selectedyear = yearElement.value;
+
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            bodyElement.innerHTML = "";
+                            addDefaultOption(bodyElement);
+                            if (
+                                typeof data === "object" &&
+                                data !== null &&
+                                data.hasOwnProperty("details")
+                            ) {
+                                const detailsArray = JSON.parse(data.details);
+                                const bodysSet = new Set();
+
+                                if (Array.isArray(detailsArray)) {
+                                    detailsArray.forEach((car) => {
+                                        if (
+                                            car.subType === selectedModelDetail &&
+                                            car.year === selectedyear &&
+                                            !bodysSet.has(car.body.name)
+                                        ) {
+                                            let bodyName = car.body.name;
+                                            bodysSet.add(bodyName);
+                                            const option = document.createElement("option");
+                                            option.value = bodyName;
+                                            if (bodyName === "Coupu00e9") {
+                                                bodyName = "Coupe";
+                                            }
+                                            if (bodyName === "Coupu00e9 / Cabrio") {
+                                                bodyName = "Coupe/Cabrio";
+                                            }
+                                            option.textContent = bodyName;
+                                            bodyElement.appendChild(option);
+                                        }
+                                    });
+                                }
+                            }
+                            selectOnlyOption(bodyElement);
+                        });
+                }
+            }
+
+            // fuel-type
+            function handlebodyChange() {
+                resetFieldsForBodyType();
+                if (bodyElement.value !== "") {
+                    displayElement(fuelElement);
+                    showLoadingMessage(fuelElement);
+                    const selectedModelDetail = modelDetailElement.value;
+                    const selectedyear = yearElement.value;
+                    const selectedbody = bodyElement.value;
+
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            fuelElement.innerHTML = "";
+                            addDefaultOption(fuelElement);
+                            if (
+                                typeof data === "object" &&
+                                data !== null &&
+                                data.hasOwnProperty("details")
+                            ) {
+                                const detailsArray = JSON.parse(data.details);
+                                const fuelsSet = new Set();
+                                if (Array.isArray(detailsArray)) {
+                                    detailsArray.forEach((car) => {
+                                        if (
+                                            car.subType === selectedModelDetail &&
+                                            car.year === selectedyear &&
+                                            car.body.name === selectedbody &&
+                                            !fuelsSet.has(car.fuel.name)
+                                        ) {
+                                            const option = document.createElement("option");
+                                            option.value = car.fuel.name;
+                                            option.textContent = car.fuel.name;
+                                            fuelElement.appendChild(option);
+                                            fuelsSet.add(car.fuel.name);
+                                        }
+                                    });
+                                }
+                            }
+                            selectOnlyOption(fuelElement);
+                        });
+                }
+            }
+
+            // gear-type
+            function handlefuelChange() {
+                resetFieldsForFuelType();
+                if (fuelElement.value !== "") {
+                    displayElement(gearTypeElement);
+                    showLoadingMessage(gearTypeElement);
+                    const selectedModelDetail = modelDetailElement.value;
+                    const selectedyear = yearElement.value;
+                    const selectedbody = bodyElement.value;
+                    const selectedfuel = fuelElement.value;
+
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            gearTypeElement.innerHTML = "";
+                            addDefaultOption(gearTypeElement);
+                            const parsedData = JSON.parse(data.details);
+                            const gearSet = new Set();
+                            parsedData.forEach((car) => {
+                                if (
+                                    car.subType === selectedModelDetail &&
+                                    car.year === selectedyear &&
+                                    car.body.name === selectedbody &&
+                                    car.fuel.name === selectedfuel
+                                ) {
+                                    car.gear.forEach((gear) => {
+                                        const gearTypeName = gear.name;
+                                        gearSet.add(gearTypeName);
+                                    });
+                                }
+                            });
+                            gearSet.forEach((gearType) => {
+                                const option = document.createElement("option");
+                                option.textContent = gearType;
+                                gearTypeElement.appendChild(option);
+                            });
+                            selectOnlyOption(gearTypeElement);
+                        });
+                }
+            }
+
+            // power-type (kw/ps)
+            function handleGearlTypeChange() {
+                resetFieldsForGearType();
+                if (gearTypeElement.value !== "") {
+                    displayElement(powerTypeElement);
+                    showLoadingMessage(powerTypeElement);
+                    fetch(url)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            powerTypeElement.innerHTML = "";
+                            addDefaultOption(powerTypeElement);
+                            const selectedModelDetail = modelDetailElement.value;
+                            const selectedyear = yearElement.value;
+                            const selectedbody = bodyElement.value;
+                            const selectedfuel = fuelElement.value;
+                            const selectedGearType = gearTypeElement.value;
+                            const parsedData = JSON.parse(data.details);
+                            const powerTypeSet = new Set(); // Create a set to store unique power type values
+
+                            parsedData.forEach((car) => {
+                                if (
+                                    car.subType === selectedModelDetail &&
+                                    car.year === selectedyear &&
+                                    car.body.name === selectedbody &&
+                                    car.fuel.name === selectedfuel &&
+                                    car.gear.some((gear) => gear.name === selectedGearType)
+                                ) {
+                                    const powerType =
+                                        (car.power ? car.power + " kW / " : "") +
+                                        (car.ps ? car.ps + " PS" : "");
+                                    powerTypeSet.add(powerType.trim().slice(0, -5)); // Remove the last character
+                                }
+                            });
+                            powerTypeSet.forEach((powerType) => {
+                                const option = document.createElement("option");
+                                option.textContent = powerType;
+                                powerTypeElement.appendChild(option);
+                            });
+                            selectOnlyOption(powerTypeElement);
+                        });
+                }
+            }
+
+            function displayElementUserData(element) {
+                const label = document.querySelector(`label[for="${element.id}"]`);
+                if (label) {
+                    label.style.display = "block";
+                }
+                element.style.display = "block";
+            }
+
+            // Kilometerstand
+            function handlePowerTypeChange() {
+                displayElement(kilometerTypeElement);
+            }
+
+            // User information 1
+            function handleKilometerTypeChange() {
+                displayElementUserData(kilometerTypeElement);
+                // hide FileUpload
+                uploadFileElements.forEach(function (element) {
+                    element.style.display = "block";
+                });
+                displayElementUserData(firstNameTypeElement);
+                displayElementUserData(lastNameTypeElement);
+                displayElementUserData(emailTypeElement);
+                displayElementUserData(telephoneTypeElement);
+            }
+
+            // User information 2 && show submitButton
+            function handleUserInformation1TypeChange() {
+                displayElementUserData(begutachtungTypeElement);
+                displayElementUserData(finTypeElement);
+                displayElementUserData(kontaktTypeElement);
+                displayElementUserData(wishTimeLabel)
+                displayElementUserData(wishDate);
+                displayElementUserData(wishTime);
+                displayElementUserData(messageTypeElement);
+
+                submitButton.style.display = "block";
+            }
+
+            markeElement.addEventListener("change", handleMarkeChange);
+            modelElement.addEventListener("change", handleModelChange);
+            modelDetailElement.addEventListener("change", handleModelDetailChange);
+            yearElement.addEventListener("change", handleyearChange);
+            bodyElement.addEventListener("change", handlebodyChange);
+            fuelElement.addEventListener("change", handlefuelChange);
+            gearTypeElement.addEventListener("change", handleGearlTypeChange);
+            powerTypeElement.addEventListener("change", handlePowerTypeChange);
+            kilometerTypeElement.addEventListener("input", handleKilometerTypeChange);
+            telephoneTypeElement.addEventListener("input", handleUserInformation1TypeChange);
+            emailTypeElement.addEventListener("input", handleUserInformation1TypeChange);
+
+            //predict api-call
+            const predictButton = document.getElementById("predict-price");
+            
+            submitButton.addEventListener('click', function () {
+                // Capture form data
+                const make = markeElement.value;
+                const model = modelElement.value; //.replace(/\s+/g, '');
+                const mileage = kilometerTypeElement.value;
+                const transmission = gearTypeElement.value;
+                const fuel = fuelElement.value;
+                const power_ps = powerTypeElement.value.split(" ")[3];
+                const car_age = new Date().getFullYear() - yearElement.value;
+                const subtype = modelDetailElement.value; //.replace(/\s+/g, '');
+
+                // Prepare data payload
+                const requestData = {
+                    make: make,
+                    model_name: model,
+                    mileage: parseInt(mileage),
+                    transmission: transmission,
+                    fuel: fuel,
+                    power_ps: parseInt(power_ps),
+                    car_age: parseInt(car_age),
+                    subtype: subtype,
+                };
+
+                console.log("Request Data:", requestData);
+                // Send POST request to the prediction API
+                // deployment 'https://car-price-predictor-755690643224.europe-west3.run.app/predict'
+
+                fetch('http://127.0.0.1:5002/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.predicted_price) {
+                            alert(`The predicted price of the car is: € ${data.predicted_price}`);
+                            displayPricePrediction(make,model,subtype,data.predicted_price)
+                        } else {
+                            alert(`Error: ${data.error}`);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error during API call:', error);
+                    });
             });
-        }
-      }
 
-      function displayElementUserData(element) {
-        const label = document.querySelector(`label[for="${element.id}"]`);
-        if (label) {
-          label.style.display = "block";
-        }
-        element.style.display = "block";
-      }
 
-      // Kilometerstand
-      function handlePowerTypeChange() {
-        displayElement(kilometerTypeElement);
-      }
-
-      // User information 1
-      function handleKilometerTypeChange() {
-        displayElementUserData(kilometerTypeElement);
-        // hide FileUpload
-        uploadFileElements.forEach(function (element) {
-          element.style.display = "block";
+            function displayPricePrediction(make,model,subtype,predictedPrice) {
+                const priceDisplay = document.getElementById("price-display");
+                let fromPrice = predictedPrice * 0.75;
+                fromPrice = Math.round(fromPrice);
+                let toPrice = predictedPrice * 0.85;
+                toPrice = Math.round(toPrice);
+                const progressPercent = 100; 
+                priceDisplay.innerHTML = `
+            <h3>${make} ${model} ${subtype}</h3>
+          <div class="price-values">
+            <div class="from_price" id>€${fromPrice}<br>von</div>
+            <div class="to_price">€${toPrice}<br>bis</div>
+          </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: ${progressPercent}%;"></div>
+        </div>
+          <div class="info-text">
+            Diese Schätzung basiert auf vergleichbaren Fahrzeugen, die online angeboten oder versteigert wurden. Der tatsächliche Verkaufspreis kann je nach Zustand und Ausstattung Ihres Fahrzeugs variieren.
+          </div>
+        `;
+            }
         });
-        displayElementUserData(firstNameTypeElement);
-        displayElementUserData(lastNameTypeElement);
-        displayElementUserData(emailTypeElement);
-        displayElementUserData(telephoneTypeElement);
-      }
 
-      // User information 2 && show submitButton
-      function handleUserInformation1TypeChange() {
-        displayElementUserData(begutachtungTypeElement);
-        displayElementUserData(finTypeElement);
-        displayElementUserData(kontaktTypeElement);
-        displayElementUserData(wishTimeLabel)
-        displayElementUserData(wishDate);
-        displayElementUserData(wishTime);
-        displayElementUserData(messageTypeElement);
-
-        submitButton.style.display = "block";
-      }
-
-      markeElement.addEventListener("change", handleMarkeChange);
-      modelElement.addEventListener("change", handleModelChange);
-      modelDetailElement.addEventListener("change", handleModelDetailChange);
-      yearElement.addEventListener("change", handleyearChange);
-      bodyElement.addEventListener("change", handlebodyChange);
-      fuelElement.addEventListener("change", handlefuelChange);
-      gearTypeElement.addEventListener("change", handleGearlTypeChange);
-      powerTypeElement.addEventListener("change", handlePowerTypeChange);
-      kilometerTypeElement.addEventListener("input", handleKilometerTypeChange);
-      telephoneTypeElement.addEventListener("input", handleUserInformation1TypeChange);
-      emailTypeElement.addEventListener("input", handleUserInformation1TypeChange);
-    });
-  </script>
+    </script>
 </body>
 
 </html>
