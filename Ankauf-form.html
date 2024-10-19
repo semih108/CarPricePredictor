@@ -611,7 +611,7 @@
                 // Send POST request to the prediction API
                 // deployment 'https://car-price-predictor-755690643224.europe-west3.run.app/predict'
 
-                fetch('http://127.0.0.1:5002/predict', {
+                fetch('https://car-price-prediction-4j5ivpj3ta-ew.a.run.app/predict', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -624,21 +624,31 @@
                             alert(`The predicted price of the car is: € ${data.predicted_price}`);
                             displayPricePrediction(make,model,subtype,data.predicted_price)
                         } else {
+                            displayNotPricePrediction();
                             alert(`Error: ${data.error}`);
                         }
                     })
                     .catch((error) => {
+                        displayNotPricePrediction();
                         console.error('Error during API call:', error);
                     });
             });
-
+            
+            const priceDisplay = document.getElementById("price-display");
+            
+            function displayNotPricePrediction() {
+                priceDisplay.innerHTML = `
+          <div class="info-text">
+            Unser Model konnte keine Schätzung für ihr Fahrzeug finden
+          </div>
+        `;
+            }
 
             function displayPricePrediction(make,model,subtype,predictedPrice) {
-                const priceDisplay = document.getElementById("price-display");
                 let fromPrice = predictedPrice * 0.75;
-                fromPrice = Math.round(fromPrice);
+                fromPrice = Math.round(fromPrice / 100) * 100;
                 let toPrice = predictedPrice * 0.85;
-                toPrice = Math.round(toPrice);
+                toPrice = Math.round(toPrice /100) * 100;
                 const progressPercent = 100; 
                 priceDisplay.innerHTML = `
             <h3>${make} ${model} ${subtype}</h3>
