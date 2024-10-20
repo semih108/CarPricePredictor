@@ -82,6 +82,24 @@
         let url = "https://www.ta-autoshop.at/api.php";
         let makeId;
 
+        function initializeSelectors() {
+          const selectors = [
+            modelElement,
+            modelDetailElement,
+            yearElement,
+            bodyElement,
+            fuelElement,
+            gearTypeElement,
+            powerTypeElement,
+            predictedPriceElement
+          ];
+
+          selectors.forEach((selector) => {
+            hideSelector(selector);
+          });
+        }
+        initializeSelectors();
+        
         function hideSelector(selector) {
           if (selector) {
             selector.style.display = "none";
@@ -92,23 +110,6 @@
             }
           }
         }
-
-        function initializeSelectors() {
-          const selectors = [
-            modelElement,
-            modelDetailElement,
-            yearElement,
-            bodyElement,
-            fuelElement,
-            gearTypeElement,
-            powerTypeElement,
-          ];
-
-          selectors.forEach((selector) => {
-            hideSelector(selector);
-          });
-        }
-        initializeSelectors();
 
         function hideElementUserData(element) {
           element.style.display = "none";
@@ -674,11 +675,9 @@
                 fromPrice = Math.round(fromPrice / 100) * 100;
                 let toPrice = data.predicted_price * 0.85;
                 toPrice = Math.round(toPrice / 100) * 100;
-                predictedPriceElement.value = `von: €${fromPrice} bis: €${toPrice}`;
+                predictedPriceElement.value = `${fromPrice}€ - ${toPrice}€`;
 
-                alert(
-                  `The predicted price of the car is: € ${data.predicted_price}`
-                );
+                console.log(`The predicted price of the car is: € ${data.predicted_price}`);
                 displayPricePrediction(
                   make,
                   model,
@@ -687,18 +686,19 @@
                   toPrice
                 );
 
+                // send formular
                 setTimeout(() => {
-                  isSubmitting = true; // Set submitting flag
+                  isSubmitting = true; 
                   const elementorForm = jQuery(submitButton).closest("form");
-                  elementorForm.trigger("submit"); // Submit the form after delay
-                }, 2000); // Delay of 2 seconds
+                  elementorForm.trigger("submit"); 
+                }, 2000); 
                 console.log(
                   "Submitting form with predicted price: ",
                   predictedPriceElement.value
                 );
               } else {
                 displayNotPricePrediction();
-                alert(`Error: ${data.error}`);
+                console.log(`Error: ${data.error}`);
               }
             })
             .catch((error) => {
@@ -720,10 +720,11 @@
 
         function displayLoadingPricePrediction() {
           predictionBody.style.display = "block";
-          priceDisplay.innerHTML = `<div class="info-text">
-                <div class="loader"></div>
-                <p>Bitte warten Sie, während unser Modell den Preis für Ihr Fahrzeug berechnet!</p>
-            </div>`;
+          priceDisplay.innerHTML = `
+        <div class="info-text-container">
+          <div class="loader"></div> <!-- Loader Icon -->
+          <p>Bitte warten Sie, während unser Modell den Preis für Ihr Fahrzeug berechnet!</p>
+        </div>`;
         }
 
         function displayPricePrediction(

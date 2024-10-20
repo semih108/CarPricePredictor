@@ -89,30 +89,34 @@
     }
 
     .info-text {
+      display: flex;
+      align-items: center;
       font-size: 14px;
       color: #555;
       margin-top: 20px;
     }
-    
-    .elementor-widget-container {
-    text-align: center;
-    
-        /*waiting api call icon*/
-        .loader {
-            border: 8px solid #f3f3f3; 
-            border-top: 8px solid #BD1822; 
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-        }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-}
+    .loader {
+      border: 8px solid #f3f3f3; 
+      border-top: 8px solid #BD1822; 
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+      margin-right: 10px; /* Abstand zwischen Text und Loader */
+    }
 
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Flexbox für Text und Loader */
+    .info-text-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 
@@ -121,6 +125,11 @@
       <!-- Button to trigger prediction -->
       <!--<button id="predict-price">Preis vorhersagen</button> -->
     
-      <div id="price-display"></div>
+      <div id="price-display">
+        <div class="info-text-container">
+          <div class="loader"></div> <!-- Loader Icon -->
+          <p>Warte auf API-Antwort...</p>
+        </div>
+      </div>
     </div>
 </body>
