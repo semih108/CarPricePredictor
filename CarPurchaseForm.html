@@ -91,7 +91,7 @@
             fuelElement,
             gearTypeElement,
             powerTypeElement,
-            predictedPriceElement
+            predictedPriceElement,
           ];
 
           selectors.forEach((selector) => {
@@ -99,7 +99,7 @@
           });
         }
         initializeSelectors();
-        
+
         function hideSelector(selector) {
           if (selector) {
             selector.style.display = "none";
@@ -598,7 +598,6 @@
           displayElementUserData(wishDate);
           displayElementUserData(wishTime);
           displayElementUserData(messageTypeElement);
-
           submitButton.style.display = "block";
         }
 
@@ -610,14 +609,8 @@
         fuelElement.addEventListener("change", handlefuelChange);
         gearTypeElement.addEventListener("change", handleGearlTypeChange);
         powerTypeElement.addEventListener("change", handlePowerTypeChange);
-        kilometerTypeElement.addEventListener(
-          "input",
-          handleKilometerTypeChange
-        );
-        emailTypeElement.addEventListener(
-          "input",
-          handleUserInformation1TypeChange
-        );
+        kilometerTypeElement.addEventListener("input",handleKilometerTypeChange);
+        emailTypeElement.addEventListener("input",handleUserInformation1TypeChange);
 
         //predict api-call
         const predictButton = document.getElementById("predict-price");
@@ -638,7 +631,10 @@
           const make = markeElement.value;
           const model = modelElement.value; //.replace(/\s+/g, '');
           const mileage = kilometerTypeElement.value;
-          const transmission = gearTypeElement.value;
+          var transmission = gearTypeElement.value;
+          if (transmission == "Doppelkupplung") {
+            transmission = "Automatik";
+          }
           const fuel = fuelElement.value;
           const power_ps = powerTypeElement.value.split(" ")[3];
           const car_age = new Date().getFullYear() - yearElement.value;
@@ -688,10 +684,10 @@
 
                 // send formular
                 setTimeout(() => {
-                  isSubmitting = true; 
+                  isSubmitting = true;
                   const elementorForm = jQuery(submitButton).closest("form");
-                  elementorForm.trigger("submit"); 
-                }, 2000); 
+                  elementorForm.trigger("submit");
+                }, 2000);
                 console.log(
                   "Submitting form with predicted price: ",
                   predictedPriceElement.value
@@ -723,7 +719,7 @@
           priceDisplay.innerHTML = `
         <div class="info-text-container">
           <div class="loader"></div> <!-- Loader Icon -->
-          <p>Bitte warten Sie, während unser Modell den Preis für Ihr Fahrzeug berechnet!</p>
+          <p>Preis wird berechnet...</p>
         </div>`;
         }
 
