@@ -10,6 +10,7 @@
   <body>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // #region Selectors
         const markeElement = document.querySelector(
           'select[name="form_fields[marke]"]'
         );
@@ -78,6 +79,8 @@
         );
         const form = document.querySelector("form");
         const submitButton = document.querySelector("button.elementor-button");
+        // #endregion
+
         submitButton.style.display = "none";
         let url = "https://www.ta-autoshop.at/api.php";
         let makeId;
@@ -133,8 +136,8 @@
         hideElementUserData(wishTimeLabel);
 
         //hide FileUpload
-        uploadFileElements.forEach(function (element) {
-          element.style.display = "none";
+          uploadFileElements.forEach(function (element) {
+            element.style.display = "none";
         });
 
         function displayElement(element) {
@@ -142,7 +145,6 @@
           if (label) {
             label.style.display = "block";
           }
-
           element.style.display = "block";
           element.innerHTML = "<option>Loading...</option>";
         }
@@ -167,6 +169,7 @@
           selector.innerHTML = "<option>Loading...</option>";
         }
 
+        // #region Reset Fields
         function resetFieldsForMake() {
           const fieldsToReset = [
             modelElement,
@@ -248,8 +251,9 @@
             hideSelector(field);
           });
         }
+        // #endregion
 
-        // make
+        // #region make
         fetch(url)
           .then((response) => response.json())
           .then((data) => {
@@ -279,9 +283,10 @@
           .catch((error) => {
             console.log("Error fetching data:", error);
           });
+        // #endregion
 
-        // model
-        function handleMarkeChange() {
+        // #region model
+        function handleMakeChange() {
           resetFieldsForMake();
           if (markeElement.value !== "") {
             displayElement(modelElement);
@@ -310,8 +315,9 @@
               });
           }
         }
+        // #endregion
 
-        // model-detail
+        // #region model-detail
         function handleModelChange() {
           resetFieldsForModel();
           if (markeElement.value !== "") {
@@ -345,8 +351,9 @@
               });
           }
         }
+        // #endregion
 
-        // year
+        // #region year
         function handleModelDetailChange() {
           resetFieldsForModelDetail();
           if (modelDetailElement.value !== "") {
@@ -384,8 +391,9 @@
               });
           }
         }
+        // #endregion
 
-        // Body Type
+        // #region body type
         function handleyearChange() {
           resetFieldsForBuiltYear();
           if (yearElement.value !== "") {
@@ -434,8 +442,9 @@
               });
           }
         }
+        // #endregion
 
-        // fuel-type
+        // #region fuel type
         function handlebodyChange() {
           resetFieldsForBodyType();
           if (bodyElement.value !== "") {
@@ -478,8 +487,9 @@
               });
           }
         }
+        // endregion
 
-        // gear-type
+        // #region gear type
         function handlefuelChange() {
           resetFieldsForFuelType();
           if (fuelElement.value !== "") {
@@ -519,8 +529,9 @@
               });
           }
         }
+        // #endregion
 
-        // power-type (kw/ps)
+        // #region power-type (kw/ps)
         function handleGearlTypeChange() {
           resetFieldsForGearType();
           if (gearTypeElement.value !== "") {
@@ -562,6 +573,7 @@
               });
           }
         }
+        // #endregion
 
         function displayElementUserData(element) {
           const label = document.querySelector(`label[for="${element.id}"]`);
@@ -571,7 +583,7 @@
           element.style.display = "block";
         }
 
-        // Kilometerstand
+        // mileage
         function handlePowerTypeChange() {
           displayElement(kilometerTypeElement);
         }
@@ -580,10 +592,7 @@
         function handleKilometerTypeChange() {
           displayElementUserData(kilometerTypeElement);
           // hide FileUpload
-          uploadFileElements.forEach(function (element) {
-            element.style.display = "block";
-          });
-          displayElementUserData(firstNameTypeElement);
+          uploadFileElements.forEach(function (element) {element.style.display = "block";displayElementUserData(firstNameTypeElement);});
           displayElementUserData(lastNameTypeElement);
           displayElementUserData(emailTypeElement);
           displayElementUserData(telephoneTypeElement);
@@ -601,7 +610,7 @@
           submitButton.style.display = "block";
         }
 
-        markeElement.addEventListener("change", handleMarkeChange);
+        markeElement.addEventListener("change", handleMakeChange);
         modelElement.addEventListener("change", handleModelChange);
         modelDetailElement.addEventListener("change", handleModelDetailChange);
         yearElement.addEventListener("change", handleyearChange);
