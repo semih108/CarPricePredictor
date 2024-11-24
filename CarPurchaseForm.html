@@ -680,36 +680,35 @@
             isPricePredicted = false;
           });
       }
-
       let isSubmitting = false;
-      submitButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        displayLoadingPricePrediction();
-        console.log("clicked");
-        if (isSubmitting) {
-          // give permission to submit form
-          return;
-        }
-        // send formular
-        console.log("price prediction" + isPricePredicted);
-        if (isPricePredicted) {
-          displayPricePrediction(
-            make,
-            model,
-            subtype,
-            fromPrice,
-            toPrice
-          );
-          setTimeout(() => {
-            isSubmitting = true;
-            const elementorForm = jQuery(submitButton).closest("form");
-            elementorForm.trigger("submit");
-          }, 2000);
-        }
-        else {
-          displayNotPricePrediction();
-        }
-      });
+submitButton.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  // Show loading indicator for 1 second
+  displayLoadingPricePrediction();
+
+  setTimeout(() => {
+    console.log("clicked");
+
+    if (isSubmitting) {
+      // Allow form submission
+      return;
+    }
+
+    console.log("price prediction", isPricePredicted);
+    if (isPricePredicted) {
+      displayPricePrediction(make, model, subtype, fromPrice, toPrice);
+
+      setTimeout(() => {
+        isSubmitting = true;
+        const elementorForm = jQuery(submitButton).closest("form");
+        elementorForm.trigger("submit");
+      }, 2000);
+    } else {
+      displayNotPricePrediction();
+    }
+  }, 500); 
+});
 
       const predictionBody = document.getElementById("prediction-body");
       const priceDisplay = document.getElementById("price-display");
