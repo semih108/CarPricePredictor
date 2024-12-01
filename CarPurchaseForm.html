@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <style>
     .elementor-select-wrapper .select-caret-down-wrapper {
@@ -669,7 +670,7 @@
               predictedPriceElement.value = `${fromPrice}€ - ${toPrice}€`;
 
               console.log(`The predicted price of the car is: € ${data.predicted_price}`);
-              console.log("Submitting form with predicted price: ",predictedPriceElement.value);
+              console.log("Submitting form with predicted price: ", predictedPriceElement.value);
             } else {
               console.log(`Error: ${data.error}`);
               isPricePredicted = false;
@@ -680,35 +681,46 @@
             isPricePredicted = false;
           });
       }
+
+      function waitForConditionToBeTrue(conditionCallback, actionCallback, checkInterval = 100) {
+        const interval = setInterval(() => {
+          if (conditionCallback()) {
+            clearInterval(interval);
+            actionCallback();
+          }
+        }, checkInterval);
+      }
+
       let isSubmitting = false;
-submitButton.addEventListener("click", function (event) {
-  event.preventDefault();
+      submitButton.addEventListener("click", function (event) {
+        event.preventDefault();
 
-  // Show loading indicator for 1 second
-  displayLoadingPricePrediction();
+        displayLoadingPricePrediction();
 
-  setTimeout(() => {
-    console.log("clicked");
+        waitForConditionToBeTrue(
+          () => isPricePredicted,
+          () => {
+            console.log("clicked");
 
-    if (isSubmitting) {
-      // Allow form submission
-      return;
-    }
+            if (isSubmitting) {
+              // Allow form submission
+              return;
+            }
 
-    console.log("price prediction", isPricePredicted);
-    if (isPricePredicted) {
-      displayPricePrediction(make, model, subtype, fromPrice, toPrice);
+            console.log("price prediction", isPricePredicted);
+            if (isPricePredicted) {
+              displayPricePrediction(make, model, subtype, fromPrice, toPrice);
 
-      setTimeout(() => {
-        isSubmitting = true;
-        const elementorForm = jQuery(submitButton).closest("form");
-        elementorForm.trigger("submit");
-      }, 2000);
-    } else {
-      displayNotPricePrediction();
-    }
-  }, 500); 
-});
+              setTimeout(() => {
+                isSubmitting = true;
+                const elementorForm = jQuery(submitButton).closest("form");
+                elementorForm.trigger("submit");
+              }, 2000);
+            } else {
+              displayNotPricePrediction();
+            }
+          }, 500);
+      });
 
       const predictionBody = document.getElementById("prediction-body");
       const priceDisplay = document.getElementById("price-display");
@@ -755,4 +767,5 @@ submitButton.addEventListener("click", function (event) {
     });
   </script>
 </body>
+
 </html>
